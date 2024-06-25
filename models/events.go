@@ -83,3 +83,49 @@ func GetEventById(id int64) (*Event, error) {
 
 	return &event, nil
 }
+
+// updating the event
+func (e Event) Update() error {
+	query := `
+		UPDATE events 
+		SET name = ? , description = ?, location = ? , dateTime  = ?
+		WHERE id = ?
+	`
+
+	preparedStmnt, err := db.GlobalDB.Prepare(query)
+
+	if err != nil {
+		return err
+	}
+
+	defer preparedStmnt.Close()
+
+	_, err = preparedStmnt.Exec(&e.Name, &e.Description, &e.Location, &e.DateTime, &e.UserID)
+
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+// delete event
+func (e Event) Delete() error {
+	query := `DELETE from events WHERE id = ?`
+
+	preparedStatement, err := db.GlobalDB.Prepare(query)
+
+	if err != nil {
+		return err
+	}
+
+	defer preparedStatement.Close()
+
+	_, err = preparedStatement.Exec(&e.ID)
+
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
