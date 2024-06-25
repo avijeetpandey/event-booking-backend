@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"net/http"
+	"strconv"
 
 	"github.com/avijeetpandey/event-booking/db"
 	"github.com/avijeetpandey/event-booking/models"
@@ -16,6 +17,7 @@ func main() {
 
 	server.GET("/events", getEvents)
 	server.POST("/events", createEvent)
+	server.GET("events/:id", getEventById)
 
 	server.Run(":8080")
 }
@@ -67,4 +69,31 @@ func createEvent(context *gin.Context) {
 		"message": "event created successfully",
 		"data":    event,
 	})
+}
+
+// fetching an event
+func getEventById(context *gin.Context) {
+	eventId, err := strconv.ParseInt(context.Param("id"), 10, 64)
+
+	if err != nil {
+		context.JSON(http.StatusInternalServerError, gin.H{
+			"message": err,
+		})
+		return
+	}
+
+	event, err := models.GetEventById(eventId)
+
+	if err != nil {
+		context.JSON(http.StatusInternalServerError, gin.H{
+			"message": err,
+		})
+		return
+	}
+
+	context.JSON(http.StatusOK, gin.H{
+		"message": "event fetched successfully",
+		"data":    event,
+	})
+
 }

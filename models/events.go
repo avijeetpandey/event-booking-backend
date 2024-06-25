@@ -1,6 +1,7 @@
 package models
 
 import (
+	"fmt"
 	"time"
 
 	"github.com/avijeetpandey/event-booking/db"
@@ -65,4 +66,20 @@ func GetAllEvents() ([]Event, error) {
 	}
 
 	return events, nil
+}
+
+func GetEventById(id int64) (*Event, error) {
+	query := fmt.Sprintf("SELECT * FROM events WHERE id = %d", id)
+	row := db.GlobalDB.QueryRow(query)
+
+	var event Event
+
+	err := row.Scan(&event.ID, &event.Name, &event.Description, &event.Location, &event.DateTime, &event.UserID)
+
+	if err != nil {
+		fmt.Println(err)
+		return nil, err
+	}
+
+	return &event, nil
 }
