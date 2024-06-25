@@ -1,6 +1,7 @@
 package models
 
 import (
+	"fmt"
 	"time"
 
 	"github.com/avijeetpandey/event-booking/db"
@@ -65,4 +66,66 @@ func GetAllEvents() ([]Event, error) {
 	}
 
 	return events, nil
+}
+
+func GetEventById(id int64) (*Event, error) {
+	query := fmt.Sprintf("SELECT * FROM events WHERE id = %d", id)
+	row := db.GlobalDB.QueryRow(query)
+
+	var event Event
+
+	err := row.Scan(&event.ID, &event.Name, &event.Description, &event.Location, &event.DateTime, &event.UserID)
+
+	if err != nil {
+		fmt.Println(err)
+		return nil, err
+	}
+
+	return &event, nil
+}
+
+// updating the event
+func (e Event) Update() error {
+	query := `
+		UPDATE events 
+		SET name = ? , description = ?, location = ? , dateTime  = ?
+		WHERE id = ?
+	`
+
+	preparedStmnt, err := db.GlobalDB.Prepare(query)
+
+	if err != nil {
+		return err
+	}
+
+	defer preparedStmnt.Close()
+
+	_, err = preparedStmnt.Exec(&e.Name, &e.Description, &e.Location, &e.DateTime, &e.UserID)
+
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+// delete event
+func (e Event) Delete() error {
+	query := `DELETE from events WHERE id = ?`
+
+	preparedStatement, err := db.GlobalDB.Prepare(query)
+
+	if err != nil {
+		return err
+	}
+
+	defer preparedStatement.Close()
+
+	_, err = preparedStatement.Exec(&e.ID)
+
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
