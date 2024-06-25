@@ -1,7 +1,6 @@
 package routes
 
 import (
-	"fmt"
 	"net/http"
 	"strconv"
 
@@ -30,8 +29,6 @@ func getEvents(context *gin.Context) {
 func createEvent(context *gin.Context) {
 	var event models.Event
 	err := context.ShouldBindJSON(&event)
-
-	fmt.Println(err)
 
 	if err != nil {
 
