@@ -1,6 +1,9 @@
 package models
 
-import "github.com/avijeetpandey/event-booking/db"
+import (
+	"github.com/avijeetpandey/event-booking/db"
+	"github.com/avijeetpandey/event-booking/utils"
+)
 
 type User struct {
 	ID       int64
@@ -20,7 +23,13 @@ func (u *User) Save() error {
 
 	defer preparedStmtnt.Close()
 
-	result, err := preparedStmtnt.Exec(u.Email, u.Password)
+	hashedPassword, err := utils.HashPassword(u.Password)
+
+	if err != nil {
+		return err
+	}
+
+	result, err := preparedStmtnt.Exec(u.Email, hashedPassword)
 
 	if err != nil {
 		return err
@@ -33,6 +42,7 @@ func (u *User) Save() error {
 	}
 
 	u.ID = id
+	u.Password = hashedPassword
 
 	return err
 }
