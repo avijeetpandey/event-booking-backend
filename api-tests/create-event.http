@@ -1,5 +1,6 @@
 POST http://localhost:8080/events
 Content-Type: application/json
+Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImF2aWplZXRwYWVAZ21haWwuY29tIiwiZXhwIjoxNzE5Njg0MTY0LCJ1c2VySWQiOjB9.XZMR3MB1lFRML_a4IWO34djIjLp8usR7vw3qZa6HhgQ
 
 {
     "name": "Berlin meeting",

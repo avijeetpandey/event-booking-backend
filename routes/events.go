@@ -27,6 +27,7 @@ func getEvents(context *gin.Context) {
 
 // creating event
 func createEvent(context *gin.Context) {
+
 	var event models.Event
 	err := context.ShouldBindJSON(&event)
 
@@ -38,7 +39,7 @@ func createEvent(context *gin.Context) {
 		return
 	}
 
-	event.UserID = 1
+	event.UserID = context.GetInt64("userId")
 
 	err = event.Save()
 
